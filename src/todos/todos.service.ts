@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Todo } from './todo.entity';
+import { Todo } from '../typeorm/models/todo.entity';
 import { CreateTodoDto } from './dto/create-todo.dto';
 
 @Injectable()
@@ -20,17 +20,21 @@ export class TodosService {
     return this.todosRepo.save(todo);
   }
 
-  async toggle(id: number): Promise<Todo> {
+  async toggle(id: number): Promise<Todo | { message: string }> {
     const todo = await this.todosRepo.findOneBy({ id });
     if (!todo) {
-      throw new Error('Todo not found');
+        return { message: 'Todo does not exist' };
     }
     todo.completed = !todo.completed;
     return this.todosRepo.save(todo);
   }
 
-  async remove(id: number) {
+async remove(id: number) {
+    const todo = await this.todosRepo.findOneBy({ id });
+    if (!todo) {
+        return { deleted: false, message: 'Todo does not exist' };
+    }
     await this.todosRepo.delete(id);
-    return { deleted: true };
-  }
+    return { deleted: true, message: 'Todo deleted successfully' };
+}
 }
