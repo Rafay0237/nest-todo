@@ -1,13 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 
-@Entity()
-export class Todo {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
+@Schema({ timestamps: true })
+export class Todo extends Document {
+  @Prop({ required: true })
   title: string;
 
-  @Column({ default: false })
+  @Prop({ default: false })
   completed: boolean;
 }
+
+export const TodoSchema = SchemaFactory.createForClass(Todo);

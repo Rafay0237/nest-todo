@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common';
 import { LoggerModule } from 'nestjs-pino';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { PinoLogger } from 'nestjs-pino';
 import { TodosModule } from './todos/todos.module';
-import { createOrmConfig } from './typeorm/orm.config';
 import { ConfigModule } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
@@ -61,9 +59,8 @@ import { ConfigModule } from '@nestjs/config';
       },
     }),
 
-    TypeOrmModule.forRootAsync({
-      inject: [PinoLogger],
-      useFactory: (logger: PinoLogger) => createOrmConfig(logger),
+    MongooseModule.forRoot(process.env.MONGO_URI as any, {
+      dbName: 'todo_db', 
     }),
 
     TodosModule,

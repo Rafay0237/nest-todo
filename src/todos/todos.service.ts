@@ -1,40 +1,41 @@
+// src/todos/todos.service.ts
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import { Todo } from '../typeorm/models/todo.entity';
 import { CreateTodoDto } from './dto/create-todo.dto';
 
 @Injectable()
 export class TodosService {
-    constructor(
-        @InjectRepository(Todo)
-        private todosRepo: Repository<Todo>,
-    ) { }
+  constructor(
+    @InjectModel(Todo.name)
+    private readonly todoModel: Model<Todo>,
+  ) {}
 
-    findAll(): Promise<Todo[]> {
-        return this.todosRepo.find();
-    }
+  async findAll(): Promise<Todo[]> {
+    return this.todoModel.find().exec();
+  }
 
-    create(createTodoDto: CreateTodoDto): Promise<Todo> {
-        const todo = this.todosRepo.create(createTodoDto);
-        return this.todosRepo.save(todo);
-    }
+  async create(createTodoDto: CreateTodoDto): Promise<Todo> {
+    const createdTodo = new this.todoModel(createTodoDto);
+    return createdTodo.save();
+  }
 
-    async toggle(id: number): Promise<Todo | { message: string }> {
-        const todo = await this.todosRepo.findOneBy({ id });
-        if (!todo) {
-            return { message: 'Todo does not exist' };
-        }
-        todo.completed = !todo.completed;
-        return this.todosRepo.save(todo);
+  async toggle(id: string): Promise<Todo | { message: string }> {
+    const todo = await this.todoModel.findById(id);
+    if (!todo) {
+      return { message: 'Todo does not exist' };
     }
+    todo.completed = !todo.completed;
+    return todo.save();
+  }
 
-    async remove(id: number) {
-        const todo = await this.todosRepo.findOneBy({ id });
-        if (!todo) {
-            return { deleted: false, message: 'Todo does not exist' };
-        }
-        await this.todosRepo.delete(id);
-        return { deleted: true, message: 'Todo deleted successfully' };
+  async remove(id: string) {
+    const todo = await this.todoModel.findById(id);
+    if (!todo) {
+      return { deleted: false, message: 'Todo does not exist' };
     }
+    await this.todoModel.findByIdAndDelete(id);
+    return { deleted: true, message: 'Todo deleted successfully' };
+  }
 }

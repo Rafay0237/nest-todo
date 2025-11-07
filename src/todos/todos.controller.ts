@@ -26,13 +26,13 @@ export class TodosController {
   @ApiOperation({ summary: 'Toggle completion of a todo' })
   @ApiResponse({ status: 200, description: 'Todo updated successfully' })
   toggle(@Param('id') id: number) {
-    return this.todosService.toggle(id);
+    return this.todosService.toggle(String(id));
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a todo by ID' })
   @ApiResponse({ status: 200, description: 'Todo deleted successfully' })
   remove(@Param('id') id: number) {
-    return this.todosService.remove(id);
+    return this.todosService.remove(String(id));
   }
 }
