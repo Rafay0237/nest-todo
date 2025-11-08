@@ -3,6 +3,7 @@ import { LoggerModule } from 'nestjs-pino';
 import { TodosModule } from './todos/todos.module';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { MongooseModule } from '@nestjs/mongoose';
     }),
 
     TodosModule,
+    RedisModule,
   ],
 })
 export class AppModule { }
