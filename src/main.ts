@@ -29,19 +29,3 @@ async function bootstrap() {
   console.log('✅ Swagger: http://localhost:3000/api/docs');
 }
 bootstrap();
-
-
-
-   const envToCheck = [
-    'NODE_ENV',
-    'PORT',
-    'DB_HOST',
-    'DB_PORT',
-    'DB_USERNAME',
-    'DB_PASSWORD',
-    'DB_NAME',
-  ];
-
-  envToCheck.forEach((key) => {
-    console.log(`${key} = ${process.env[key]}`, 'ENV');
-  });
