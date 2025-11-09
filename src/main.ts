@@ -13,6 +13,14 @@ async function bootstrapServer() {
     app.useLogger(app.get(Logger));
     app.useGlobalPipes(new ValidationPipe());
 
+    // ✅ Enable CORS for frontend + local dev
+    app.enableCors({
+      origin: '*',
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+      credentials: true,
+    });
+
+    // ✅ Swagger setup using CDN for Vercel compatibility
     const config = new DocumentBuilder()
       .setTitle('Todo API')
       .setDescription('Simple Todo App built with NestJS and MySQL')
@@ -21,7 +29,7 @@ async function bootstrapServer() {
       .build();
 
     const document = SwaggerModule.createDocument(app, config);
-    // SwaggerModule.setup('api/docs', app, document);
+
     SwaggerModule.setup('api/docs', app, document, {
       customJs: [
         'https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js',
@@ -33,13 +41,15 @@ async function bootstrapServer() {
     });
 
     await app.init();
+
+    // Get the underlying HTTP instance for Vercel
     const instance = app.getHttpAdapter().getInstance();
     cachedServer = createServer(instance);
   }
   return cachedServer;
 }
 
-// The handler Vercel expects
+// ✅ The Vercel serverless handler
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   const server = await bootstrapServer();
   server.emit('request', req, res);
