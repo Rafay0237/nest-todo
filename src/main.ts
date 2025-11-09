@@ -15,9 +15,8 @@ async function bootstrapServer() {
 
     // ✅ Enable CORS for frontend + local dev
     app.enableCors({
-      origin: '*',
-      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-      credentials: true,
+      allowedHeaders: ['content-type', 'authorization', 'accept-encoding'],
+      exposedHeaders: ['content-encoding', 'content-length'], // 
     });
 
     // ✅ Swagger setup using CDN for Vercel compatibility
