@@ -13,11 +13,15 @@ async function bootstrapServer() {
     app.useLogger(app.get(Logger));
     app.useGlobalPipes(new ValidationPipe());
 
-    // ✅ Enable CORS for frontend + local dev
+    // ✅ Enable CORS
     app.enableCors({
-      allowedHeaders: ['content-type', 'authorization', 'accept-encoding'],
-      exposedHeaders: ['content-encoding', 'content-length'], // 
+      origin: '*',
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'Accept-Encoding'],
+      exposedHeaders: ['Content-Encoding', 'Content-Length'],
+      credentials: false, // must be false when using origin '*'
     });
+
 
     // ✅ Swagger setup using CDN for Vercel compatibility
     const config = new DocumentBuilder()
