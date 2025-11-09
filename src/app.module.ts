@@ -10,7 +10,7 @@ import { RedisModule } from './redis/redis.module';
     ConfigModule.forRoot({ isGlobal: true }),
     LoggerModule.forRoot({
       pinoHttp: process.env.NODE_ENV === 'production'
-        ? {} // disable pino-pretty in production
+        ? { level: 'info' } // disable pino-pretty in production
         : {
           transport: {
             target: 'pino-pretty',
