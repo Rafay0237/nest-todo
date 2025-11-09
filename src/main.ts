@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-// import { Logger } from 'nestjs-pino';
+import { Logger } from 'nestjs-pino';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { createServer, IncomingMessage, ServerResponse } from 'http';
 
@@ -10,7 +10,7 @@ let cachedServer: any;
 async function bootstrapServer() {
   if (!cachedServer) {
     const app = await NestFactory.create(AppModule, { bufferLogs: true });
-    // app.useLogger(app.get(Logger));
+    app.useLogger(app.get(Logger));
     app.useGlobalPipes(new ValidationPipe());
 
     const config = new DocumentBuilder()
@@ -21,7 +21,16 @@ async function bootstrapServer() {
       .build();
 
     const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('api/docs', app, document);
+    // SwaggerModule.setup('api/docs', app, document);
+    SwaggerModule.setup('api/docs', app, document, {
+      customJs: [
+        'https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js',
+        'https://unpkg.com/swagger-ui-dist/swagger-ui-standalone-preset.js',
+      ],
+      customCssUrl: [
+        'https://unpkg.com/swagger-ui-dist/swagger-ui.css',
+      ],
+    });
 
     await app.init();
     const instance = app.getHttpAdapter().getInstance();
