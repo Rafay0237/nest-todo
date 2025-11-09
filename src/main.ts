@@ -9,7 +9,7 @@ let cachedServer: any;
 
 async function bootstrapServer() {
   if (!cachedServer) {
-    const app = await NestFactory.create(AppModule, { bufferLogs: true });
+    const app = await NestFactory.create(AppModule, { bufferLogs: true, cors: true });
     app.useLogger(app.get(Logger));
     app.useGlobalPipes(new ValidationPipe());
 
